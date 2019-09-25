@@ -29,17 +29,16 @@ public class Robot extends TimedRobot
 {
   //Create a robot drive object using PWMs 0, 1, 2 and 3
   CANSparkMax leftFrontMotor = new CANSparkMax(1, MotorType.kBrushless);
-  CANSparkMax rightFrontMotor = new CANSparkMax(2, MotorType.kBrushless);
-  CANSparkMax leftRearMotor = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax rightFrontMotor = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax leftRearMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax rightRearMotor = new CANSparkMax(4, MotorType.kBrushless);
   public static final int kGamepadAxisLeftStickX = 1;
 	public static final int kGamepadAxisLeftStickY = 2;
 	public static final int kGamepadAxisRightStickX = 4;
   public static final int kGamepadAxisRightStickY = 5;
-  Joystick Ljoy;
-  Joystick Rjoy;
+  Joystick Ljoy = new Joystick(0);
   //Define joystick being used at USB port 1 on the Driver Station
-  MecanumDrive drivetrain(leftFrontMotor,leftRearMotor,rightFrontMotor,rightRearMotor);
+  MecanumDrive drivetrain  = new MecanumDrive(leftFrontMotor,leftRearMotor,rightFrontMotor,rightRearMotor);
   
 
   public void teleopPeriodic() 
