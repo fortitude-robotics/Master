@@ -8,206 +8,57 @@
 package frc.robot;
 
 import frc.robot.modules.*;
-
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.Spark;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Joystick;
 
-import java.util.ArrayList;
-
-
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
+/*
+ * Simplest program to drive a robot with mecanum drive using a single Logitech
+ * Extreme 3D Pro joystick and 4 drive motors connected as follows:
+ *     - PWM 0 - Connected to front left drive motor
+ *     - PWM 1 - Connected to rear left drive motor
+ *     - PWM 2 - Connected to front right drive motor
+ *     - PWM 3 - Connected to rear right drive motor
  */
-public class Robot extends TimedRobot {
-//  private static final String kDefaultAuto = "Default";
-//  private static final String kCustomAuto = "My Auto";
-//  private String m_autoSelected;
-//  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  public final class Hardware{
-    XboxController stick = new XboxController(0);
-    CANSparkMax leftFrontMotor = new CANSparkMax(1, MotorType.kBrushless);
-    CANSparkMax rightFrontMotor = new CANSparkMax(2, MotorType.kBrushless);
-    CANSparkMax leftRearMotor = new CANSparkMax(3, MotorType.kBrushless);
-    CANSparkMax rightRearMotor = new CANSparkMax(4, MotorType.kBrushless);
-  }
+public class Robot extends TimedRobot 
+{
+  //Create a robot drive object using PWMs 0, 1, 2 and 3
+  CANSparkMax leftFrontMotor = new CANSparkMax(0, MotorType.kBrushless);
+  CANSparkMax rightFrontMotor = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax leftRearMotor = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax rightRearMotor = new CANSparkMax(3, MotorType.kBrushless);
+  public static final int kGamepadAxisLeftStickX = 1;
+	public static final int kGamepadAxisLeftStickY = 2;
+	public static final int kGamepadAxisRightStickX = 4;
+  public static final int kGamepadAxisRightStickY = 5;
+  Joystick Ljoy;
+  //Define joystick being used at USB port 1 on the Driver Station
+  MecanumDrive drivetrain = new MecanumDrive(leftFrontMotor,leftRearMotor,rightFrontMotor,rightRearMotor);
   
 
-  private ArrayList<RobotModule> modules = new ArrayList<>();
-  
-  /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
-   */
-  @Override
-  public void robotInit() {
-//    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-//    m_chooser.addOption("My Auto", kCustomAuto);
-//    SmartDashboard.putData("Auto choices", m_chooser);
+  public void teleopPeriodic() 
+  {
+    //Gettign the raw joystick imput
+    double xSpeed = Ljoy.getRawAxis(kGamepadAxisLeftStickX);
+    double ySpeed = Ljoy.getRawAxis(kGamepadAxisLeftStickY);
+    double zSpeed = Ljoy.getRawAxis(kGamepadAxisRightStickX);
 
+    //cubing the imput
+    xSpeed = Math.pow(xSpeed,3);
+    ySpeed = Math.pow(ySpeed,3);
+    zSpeed = Math.pow(zSpeed,3);
 
-
-
-    // (End of robotInit)
-    // Register modules for the robot
-
-    modules.add(new DriveTrain(this));
-
-    //
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-   
+    //Dedzone check and sigin control for application of deadzone
+    xSpeed = Math.abs(xSpeed) < .05 ? 0.0 : xSpeed - (.05 * Math.abs(xSpeed) / xSpeed);
+    ySpeed = Math.abs(ySpeed) < .05 ? 0.0 : ySpeed - (.05 * Math.abs(ySpeed) / ySpeed);
+    zSpeed = Math.abs(zSpeed) < .05 ? 0.0 : zSpeed - (.05 * Math.abs(zSpeed) / zSpeed);
     
+    //Final value passing
+    drivetrain.driveCartesian(ySpeed, -xSpeed, zSpeed);
   }
-
-  /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
-        
-    
-    
-    
-    
-    // (End of robotPeriodic)
-    // Register modules for the robot
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-   
-  }
-
-  /**
-   * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
-   *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
-   */
-  @Override
-  public void autonomousInit() {
-//    m_autoSelected = m_chooser.getSelected();
-//    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-//    System.out.println("Auto selected: " + m_autoSelected);
-
-    // (End of autonomousInit)
-    // Register modules for the robot
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-  }
-
-  /**
-   * This function is called periodically during autonomous.
-   */
-  @Override
-  public void autonomousPeriodic() {
-//    switch (m_autoSelected) {
-//      case kCustomAuto:
-//        // Put custom auto code here
-//        break;
-//      case kDefaultAuto:
-//      default:
-//        // Put default auto code here
-//        break;
-//    }
-
-    // (End of autonomousPeridodic)
-    // Register modules for the robot
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-  }
-
-  @Override
-  public void disabledInit() {
-
-    // (End of disabledInit)
-    // Register modules for the robot
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-  }
-
-  @Override
-  public void disabledPeriodic() {
-
-    // (End of disabledPeriodic)
-    // Register modules for the robot
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-  }
-
-  @Override
-  public void teleopInit() {
-
-    // (End of teleopInit)
-    // Register modules for the robot
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-  }
-
-  /**
-   * This function is called periodically during operator control.
-   */
-  @Override
-  public void teleopPeriodic() {
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-                    
-  }
-
-  @Override
-  public void testInit() {
-
-    // (End of testInit)
-    // Register modules for the robot
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-  }
-
-  /*
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
-
-    for(RobotModule m : this.modules){
-      m.robotInit();
-    }
-  }
-}
+} 
