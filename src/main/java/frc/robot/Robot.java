@@ -9,6 +9,7 @@ package frc.robot;
 
 import frc.robot.modules.*;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.Spark;
@@ -28,15 +29,15 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot extends TimedRobot 
 {
   //Create a robot drive object using PWMs 0, 1, 2 and 3
-  CANSparkMax leftFrontMotor = new CANSparkMax(0, MotorType.kBrushless);
-  CANSparkMax rightFrontMotor = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax leftFrontMotor = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax rightFrontMotor = new CANSparkMax(3, MotorType.kBrushless);
   CANSparkMax leftRearMotor = new CANSparkMax(2, MotorType.kBrushless);
-  CANSparkMax rightRearMotor = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax rightRearMotor = new CANSparkMax(4, MotorType.kBrushless);
   public static final int kGamepadAxisLeftStickX = 1;
 	public static final int kGamepadAxisLeftStickY = 2;
 	public static final int kGamepadAxisRightStickX = 4;
   public static final int kGamepadAxisRightStickY = 5;
-  Joystick Ljoy;
+  Joystick Ljoy = new Joystick(0);
   //Define joystick being used at USB port 1 on the Driver Station
   MecanumDrive drivetrain = new MecanumDrive(leftFrontMotor,leftRearMotor,rightFrontMotor,rightRearMotor);
   
@@ -44,21 +45,31 @@ public class Robot extends TimedRobot
   public void teleopPeriodic() 
   {
     //Gettign the raw joystick imput
+    /*
     double xSpeed = Ljoy.getRawAxis(kGamepadAxisLeftStickX);
     double ySpeed = Ljoy.getRawAxis(kGamepadAxisLeftStickY);
     double zSpeed = Ljoy.getRawAxis(kGamepadAxisRightStickX);
+    */
+    double zSpeed = Ljoy.getAxis(AxisType.kX);
+    double ySpeed = Ljoy.getAxis(AxisType.kY);
+    double xSpeed = Ljoy.getAxis(AxisType.kZ);
 
     //cubing the imput
     xSpeed = Math.pow(xSpeed,3);
     ySpeed = Math.pow(ySpeed,3);
     zSpeed = Math.pow(zSpeed,3);
 
+    double dz = .05;
+
     //Dedzone check and sigin control for application of deadzone
-    xSpeed = Math.abs(xSpeed) < .05 ? 0.0 : xSpeed - (.05 * Math.abs(xSpeed) / xSpeed);
-    ySpeed = Math.abs(ySpeed) < .05 ? 0.0 : ySpeed - (.05 * Math.abs(ySpeed) / ySpeed);
-    zSpeed = Math.abs(zSpeed) < .05 ? 0.0 : zSpeed - (.05 * Math.abs(zSpeed) / zSpeed);
-    
+    xSpeed = Math.abs(xSpeed) < dz ? 0.0 : xSpeed - (dz * Math.abs(xSpeed) / xSpeed);
+    ySpeed = Math.abs(ySpeed) < dz ? 0.0 : ySpeed - (dz * Math.abs(ySpeed) / ySpeed);
+    zSpeed = Math.abs(zSpeed) < dz ? 0.0 : zSpeed - (dz * Math.abs(zSpeed) / zSpeed);
+
+    double speedFactor = .7;
+    double turnFactor = .5;
+
     //Final value passing
-    drivetrain.driveCartesian(ySpeed, -xSpeed, zSpeed);
+    drivetrain.driveCartesian(-xSpeed * speedFactor, ySpeed * speedFactor, -zSpeed * turnFactor);
   }
 } 
