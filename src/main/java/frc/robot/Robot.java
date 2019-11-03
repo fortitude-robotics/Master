@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Talon;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import java.io.PrintStream;
+
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -37,8 +40,8 @@ public class Robot extends TimedRobot
   CANSparkMax rightFrontMotor = new CANSparkMax(3, MotorType.kBrushless);
   CANSparkMax leftRearMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax rightRearMotor = new CANSparkMax(4, MotorType.kBrushless);
-  TalonSRX lift1 = new TalonSRX(0);
-  TalonSRX lift2 = new TalonSRX(1);
+  TalonSRX clawHigh = new TalonSRX(1);
+  TalonSRX clawLow = new TalonSRX(2);
   public static final int kGamepadAxisLeftStickX = 1;
 	public static final int kGamepadAxisLeftStickY = 2;
 	public static final int kGamepadAxisRightStickX = 4;
@@ -56,14 +59,23 @@ public class Robot extends TimedRobot
     double ySpeed = Ljoy.getRawAxis(kGamepadAxisLeftStickY);
     double zSpeed = Ljoy.getRawAxis(kGamepadAxisRightStickX);
     */
-    double zSpeed = Ljoy.getAxis(AxisType.kX);
-    double ySpeed = Ljoy.getAxis(AxisType.kY);
-    double xSpeed = Ljoy.getAxis(AxisType.kZ);
+    double zRaw = Ljoy.getAxis(AxisType.kX);
+    double yRaw = Ljoy.getAxis(AxisType.kY);
+    double xRaw = Ljoy.getAxis(AxisType.kZ);
+    PrintStream printLog = new PrintStream(out);
+    printLog.println(zRaw);
+    printLog.println(yRaw);
+    printLog.println(xRaw);
 
-    //cubing the imput
-    xSpeed = Math.pow(xSpeed,3);
-    ySpeed = Math.pow(ySpeed,3);
-    zSpeed = Math.pow(zSpeed,3);
+
+
+    //cubing the imput, devide by factor to adjust
+    int downscale = 1000;
+    xSpeed = (Math.pow(xSpeed,3)/downscale);
+    ySpeed = (Math.pow(ySpeed,3)/downscale);
+    zSpeed = (Math.pow(zSpeed,3)/downscale);
+
+  
 
     double dz = .05;
 
