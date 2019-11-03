@@ -13,8 +13,12 @@ import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Talon;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.Joystick;
 
 /*
@@ -33,6 +37,8 @@ public class Robot extends TimedRobot
   CANSparkMax rightFrontMotor = new CANSparkMax(3, MotorType.kBrushless);
   CANSparkMax leftRearMotor = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax rightRearMotor = new CANSparkMax(4, MotorType.kBrushless);
+  TalonSRX lift1 = new TalonSRX(0);
+  TalonSRX lift2 = new TalonSRX(1);
   public static final int kGamepadAxisLeftStickX = 1;
 	public static final int kGamepadAxisLeftStickY = 2;
 	public static final int kGamepadAxisRightStickX = 4;
