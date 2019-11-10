@@ -85,7 +85,7 @@ public class Robot extends TimedRobot
     zSpeed = Math.abs(zSpeed) < dz ? 0.0 : zSpeed - (dz * Math.abs(zSpeed) / zSpeed);
 
     double speedFactor = .7;
-    double turnFactor = .5;
+    double turnFactor = .7;
 
     //Final value passing
     drivetrain.driveCartesian(-xSpeed * speedFactor, ySpeed * speedFactor, -zSpeed * turnFactor);
