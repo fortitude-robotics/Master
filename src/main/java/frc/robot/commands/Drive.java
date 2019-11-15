@@ -7,14 +7,17 @@
 
 package frc.robot.commands;
 
+import java.util.Vector;
+
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.Robot;
+
 
 public class Drive extends Command {
   public Drive() 
   {
     // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    requires(Robot.mech_Drive);
   }
 
   // Called just before this Command runs the first time
@@ -26,7 +29,8 @@ public class Drive extends Command {
   @Override
   protected void execute() 
   {
-
+    Vector axis = Robot.m_oi.GetControllerRawAxis();
+    Robot.mech_Drive.setdrivevector(axis);
   }
 
   // Make this return true when this Command no longer needs to run execute()

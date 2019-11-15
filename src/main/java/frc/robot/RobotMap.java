@@ -16,5 +16,16 @@ package frc.robot;
  */
 public class RobotMap 
 {
-  
+  public final static int DRIVER_CONTROLLER = 0;
+
+  public final static double SPEEDFACTOR = .7;
+  public final static double TURNFACTOR = .7;
+
+  public final static int DOWNSCALE = 1000;
+  public final static double EXPO = 3;
+  public final static double DEADZONE = .05;
+  public final static int FRONT_LEFT_MOTOR = 1;
+  public final static int REAR_LEFT_MOTOR = 2;
+  public final static int FRONT_RIGHT_MOTOR = 3;
+  public final static int REAR_RIGHT_MOTOR = 4;
 }

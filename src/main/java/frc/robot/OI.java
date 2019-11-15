@@ -7,7 +7,10 @@
 
 package frc.robot;
 
+import java.util.Vector;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
 
 /**
@@ -16,8 +19,15 @@ import edu.wpi.first.wpilibj.Joystick.AxisType;
  */
 public class OI 
 {
-  Joystick Ljoy = new Joystick(0);
-  double zRaw = Ljoy.getAxis(AxisType.kX);
-  double yRaw = Ljoy.getAxis(AxisType.kY);
-  double xRaw = Ljoy.getAxis(AxisType.kZ);
+  Joystick driverController = new Joystick(RobotMap.DRIVER_CONTROLLER);
+  
+  public Vector GetControllerRawAxis()
+  {
+    Vector axis = new Vector();
+    axis.add(driverController.getAxis(AxisType.kX));
+    axis.add(driverController.getAxis(AxisType.kY));
+    axis.add(driverController.getAxis(AxisType.kZ));
+    return axis;
+  }
+
 }
