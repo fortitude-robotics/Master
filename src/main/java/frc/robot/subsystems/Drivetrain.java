@@ -8,12 +8,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.Drive;
 import edu.wpi.first.wpilibj.drive.*;
 import java.util.Vector;
-import java.util.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -23,18 +21,16 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
  */
 public class Drivetrain extends Subsystem 
 {
-  CANSparkMax leftFrontMotor = new CANSparkMax(RobotMap.FRONT_LEFT_MOTOR, MotorType.kBrushless);
-  CANSparkMax rightFrontMotor = new CANSparkMax(RobotMap.FRONT_RIGHT_MOTOR, MotorType.kBrushless);
-  CANSparkMax leftRearMotor = new CANSparkMax(RobotMap.REAR_LEFT_MOTOR, MotorType.kBrushless);
-  CANSparkMax rightRearMotor = new CANSparkMax(RobotMap.REAR_RIGHT_MOTOR, MotorType.kBrushless);
-  MecanumDrive drivetrain = new MecanumDrive(leftFrontMotor,leftRearMotor,rightFrontMotor,rightRearMotor);
-
+  private CANSparkMax leftFrontMotor = new CANSparkMax(RobotMap.FRONT_LEFT_MOTOR, MotorType.kBrushless);
+  private CANSparkMax rightFrontMotor = new CANSparkMax(RobotMap.FRONT_RIGHT_MOTOR, MotorType.kBrushless);
+  private CANSparkMax leftRearMotor = new CANSparkMax(RobotMap.REAR_LEFT_MOTOR, MotorType.kBrushless);
+  private CANSparkMax rightRearMotor = new CANSparkMax(RobotMap.REAR_RIGHT_MOTOR, MotorType.kBrushless);
+  private MecanumDrive drivetrain = new MecanumDrive(leftFrontMotor,leftRearMotor,rightFrontMotor,rightRearMotor);
   @Override
   public void initDefaultCommand() 
   {
     // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-    
+    setDefaultCommand(new Drive());
   }
   public void setdrivevector(Vector axis)
   {
@@ -44,7 +40,7 @@ public class Drivetrain extends Subsystem
 
     double xSpeed = (Math.pow(axisX,RobotMap.EXPO)/RobotMap.DOWNSCALE);
     double ySpeed = (Math.pow(axisY,RobotMap.EXPO)/RobotMap.DOWNSCALE);
-    double zSpeed = (Math.pow(axisZ,RobotMap.EXPO)/RobotMap.DOWNSCALE);
+    double zSpeed = (Math.pow(axisZ,RobotMap.EXPO)/RobotMap.DOWNSCALE);   
 
     double xZoned = Math.abs(xSpeed) < RobotMap.DEADZONE ? 0.0 : xSpeed - (RobotMap.DEADZONE * Math.abs(xSpeed) / xSpeed);
     double yZoned = Math.abs(ySpeed) < RobotMap.DEADZONE ? 0.0 : ySpeed - (RobotMap.DEADZONE * Math.abs(ySpeed) / ySpeed);
@@ -55,5 +51,9 @@ public class Drivetrain extends Subsystem
     double zFactor = zZoned * RobotMap.TURNFACTOR;
 
     drivetrain.driveCartesian(-xFactor,yFactor,-zFactor);
+  }
+  public void setSafety()
+  {
+    drivetrain.setSafetyEnabled(false);
   }
 }

@@ -10,7 +10,6 @@ package frc.robot;
 import java.util.Vector;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
 
 /**
@@ -20,7 +19,7 @@ import edu.wpi.first.wpilibj.Joystick.AxisType;
 public class OI 
 {
   Joystick driverController = new Joystick(RobotMap.DRIVER_CONTROLLER);
-  
+
   public Vector GetControllerRawAxis()
   {
     Vector axis = new Vector();

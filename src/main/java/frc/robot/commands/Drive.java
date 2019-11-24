@@ -6,14 +6,13 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-
 import java.util.Vector;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 
-public class Drive extends Command {
+public class Drive extends Command 
+{
   public Drive() 
   {
     // Use requires() here to declare subsystem dependencies
@@ -22,7 +21,9 @@ public class Drive extends Command {
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  protected void initialize() 
+  {
+    
   }
 
   // Called repeatedly when this Command is scheduled to run
