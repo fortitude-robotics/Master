@@ -7,87 +7,131 @@
 
 package frc.robot;
 
-import frc.robot.modules.*;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
-import edu.wpi.first.wpilibj.drive.*;
-import edu.wpi.first.wpilibj.CAN;
-import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.Talon;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Drivetrain;
 
-import java.io.PrintStream;
-
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.Joystick;
-
-/*
- * Simplest program to drive a robot with mecanum drive using a single Logitech
- * Extreme 3D Pro joystick and 4 drive motors connected as follows:
- *     - PWM 0 - Connected to front left drive motor
- *     - PWM 1 - Connected to rear left drive motor
- *     - PWM 2 - Connected to front right drive motor
- *     - PWM 3 - Connected to rear right drive motor
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the TimedRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the build.gradle file in the
+ * project.
  */
+public class Robot extends TimedRobot {
+  public static Drivetrain mech_Drive = new Drivetrain();
+  public static Claw lifter = new Claw();
+  public static OI m_oi;
 
-public class Robot extends TimedRobot 
-{
-  //Create a robot drive object using PWMs 0, 1, 2 and 3
-  CANSparkMax leftFrontMotor = new CANSparkMax(1, MotorType.kBrushless);
-  CANSparkMax rightFrontMotor = new CANSparkMax(3, MotorType.kBrushless);
-  CANSparkMax leftRearMotor = new CANSparkMax(2, MotorType.kBrushless);
-  CANSparkMax rightRearMotor = new CANSparkMax(4, MotorType.kBrushless);
-  TalonSRX clawHigh = new TalonSRX(1);
-  TalonSRX clawLow = new TalonSRX(2);
-  public static final int kGamepadAxisLeftStickX = 1;
-	public static final int kGamepadAxisLeftStickY = 2;
-	public static final int kGamepadAxisRightStickX = 4;
-  public static final int kGamepadAxisRightStickY = 5;
-  Joystick Ljoy = new Joystick(0);
-  //Define joystick being used at USB port 1 on the Driver Station
-  MecanumDrive drivetrain = new MecanumDrive(leftFrontMotor,leftRearMotor,rightFrontMotor,rightRearMotor);
-  
+  Command m_autonomousCommand;
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
 
-  public void teleopPeriodic() 
+  /**
+   * This function is run when the robot is first started up and should be
+   * used for any initialization code.
+   */
+  @Override
+  public void robotInit() 
   {
-    //Gettign the raw joystick imput
-    /*
-    double xSpeed = Ljoy.getRawAxis(kGamepadAxisLeftStickX);
-    double ySpeed = Ljoy.getRawAxis(kGamepadAxisLeftStickY);
-    double zSpeed = Ljoy.getRawAxis(kGamepadAxisRightStickX);
-    */
-    double zRaw = Ljoy.getAxis(AxisType.kX);
-    double yRaw = Ljoy.getAxis(AxisType.kY);
-    double xRaw = Ljoy.getAxis(AxisType.kZ);
-    PrintStream printLog = new PrintStream(out);
-    printLog.println(zRaw);
-    printLog.println(yRaw);
-    printLog.println(xRaw);
-
-
-
-    //cubing the imput, devide by factor to adjust
-    int downscale = 1000;
-    xSpeed = (Math.pow(xSpeed,3)/downscale);
-    ySpeed = (Math.pow(ySpeed,3)/downscale);
-    zSpeed = (Math.pow(zSpeed,3)/downscale);
-
-  
-
-    double dz = .05;
-
-    //Dedzone check and sigin control for application of deadzone
-    xSpeed = Math.abs(xSpeed) < dz ? 0.0 : xSpeed - (dz * Math.abs(xSpeed) / xSpeed);
-    ySpeed = Math.abs(ySpeed) < dz ? 0.0 : ySpeed - (dz * Math.abs(ySpeed) / ySpeed);
-    zSpeed = Math.abs(zSpeed) < dz ? 0.0 : zSpeed - (dz * Math.abs(zSpeed) / zSpeed);
-
-    double speedFactor = .7;
-    double turnFactor = .7;
-
-    //Final value passing
-    drivetrain.driveCartesian(-xSpeed * speedFactor, ySpeed * speedFactor, -zSpeed * turnFactor);
+    m_oi = new OI();
+    mech_Drive.setSafety();
+    // chooser.addOption("My Auto", new MyAutoCommand());
+    SmartDashboard.putData("Auto mode", m_chooser);
   }
-} 
+
+  /**
+   * This function is called every robot packet, no matter the mode. Use
+   * this for items like diagnostics that you want ran during disabled,
+   * autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before
+   * LiveWindow and SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() 
+  {
+    RobotMap.SCALEFACTOR = SmartDashboard.getNumber("Scalefactor", RobotMap.DEFAULTFACTOR);
+    
+  }
+
+  /**
+   * This function is called once each time the robot enters Disabled mode.
+   * You can use it to reset any subsystem information you want to clear when
+   * the robot is disabled.
+   */
+  @Override
+  public void disabledInit() {
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    Scheduler.getInstance().run();
+  }
+
+  /**
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different autonomous modes using the dashboard. The sendable
+   * chooser code works with the Java SmartDashboard. If you prefer the
+   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+   * getString code to get the auto name from the text box below the Gyro
+   *
+   * <p>You can add additional auto modes by adding additional commands to the
+   * chooser code above (like the commented example) or additional comparisons
+   * to the switch structure below with additional strings & commands.
+   */
+  @Override
+  public void autonomousInit() {
+    m_autonomousCommand = m_chooser.getSelected();
+
+    /*
+     * String autoSelected = SmartDashboard.getString("Auto Selector",
+     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
+     * = new MyAutoCommand(); break; case "Default Auto": default:
+     * autonomousCommand = new ExampleCommand(); break; }
+     */
+
+    // schedule the autonomous command (example)
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.start();
+    }
+  }
+
+  /**
+   * This function is called periodically during autonomous.
+   */
+  @Override
+  public void autonomousPeriodic() {
+    Scheduler.getInstance().run();
+  }
+
+  @Override
+  public void teleopInit() {
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    if (m_autonomousCommand != null) 
+    {
+      m_autonomousCommand.cancel();
+    }
+  }
+
+  /**
+   * This function is called periodically during operator control.
+   */
+  @Override
+  public void teleopPeriodic() {
+    Scheduler.getInstance().run();
+    System.out.println(mech_Drive.readEncoder());
+  }
+
+  /**
+   * This function is called periodically during test mode.
+   */
+  @Override
+  public void testPeriodic() {
+  }
+}
