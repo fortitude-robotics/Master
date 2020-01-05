@@ -10,7 +10,6 @@ package frc.robot;
 import java.util.Vector;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -20,13 +19,21 @@ public class OI
 {
   Joystick driverController = new Joystick(RobotMap.DRIVER_CONTROLLER);
 
-  public Vector GetControllerRawAxis()
+  public Vector<Double> GetControllerRawAxis()
   {
-    Vector axis = new Vector();
-    axis.add(driverController.getAxis(AxisType.kX));
-    axis.add(driverController.getAxis(AxisType.kY));
-    axis.add(driverController.getAxis(AxisType.kZ));
+    Vector<Double> axis = new Vector<Double>();
+    axis.add(driverController.getX());
+    axis.add(driverController.getY());
+    axis.add(driverController.getZ());
     return axis;
+  }
+  public boolean GetL1Bumper()
+  {
+    return driverController.getRawButton(RobotMap.LEFT_BUMPER_1);
+  }
+  public boolean GetR1Bumper()
+  {
+    return driverController.getRawButton(RobotMap.RIGHT_BUMPER_1);
   }
 
 }

@@ -6,32 +6,26 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-import java.util.Vector;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-
-public class Drive extends Command 
-{
-  public Drive() 
+public class HoldPosition extends Command {
+  public HoldPosition() 
   {
-    // Use requires() here to declare subsystem dependencies
-    requires(Robot.mech_Drive);
+    requires(Robot.lifter);
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() 
-  {
-
+  protected void initialize() {
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() 
   {
-    Vector<Double> axis = Robot.m_oi.GetControllerRawAxis();
-    Robot.mech_Drive.setdrivevector(axis);
+    
   }
 
   // Make this return true when this Command no longer needs to run execute()

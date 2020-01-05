@@ -7,18 +7,44 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.commands.HoldPosition;
 
 /**
  * Add your docs here.
  */
-public class Claw extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+public class Claw extends Subsystem 
+{
+  private TalonSRX Upperfeed = new TalonSRX(1);
+  private TalonSRX Lowerfeed = new TalonSRX(1);
+  private TalonSRX Lift1 = new TalonSRX(1);
+  private TalonSRX Lift2 = new TalonSRX(1);
+  
 
   @Override
-  public void initDefaultCommand() {
+  public void initDefaultCommand() 
+  {
     // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+    setDefaultCommand(new HoldPosition());
+  }
+  
+  public void liftUp()
+  {
+
+  }
+  public void liftDown()
+  {
+
+  }
+
+  public void feedIn()
+  {
+
+  }
+  public void feedOut()
+  {
+    
   }
 }

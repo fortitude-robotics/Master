@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -23,6 +24,7 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class Robot extends TimedRobot {
   public static Drivetrain mech_Drive = new Drivetrain();
+  public static Claw lifter = new Claw();
   public static OI m_oi;
 
   Command m_autonomousCommand;
@@ -52,6 +54,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() 
   {
+    RobotMap.SCALEFACTOR = SmartDashboard.getNumber("Scalefactor", RobotMap.DEFAULTFACTOR);
     
   }
 
@@ -122,6 +125,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
+    System.out.println(mech_Drive.readEncoder());
   }
 
   /**
